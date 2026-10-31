@@ -50,3 +50,4 @@ En el video se muestra la página, la consulta de los temas, el escenario funcio
 ---
 
 ## 📊 Resultados
+[Ver Resultados de la Practica](https://github.com/JoseReyes1603/Noticias-Clim-ticas-del-D-a-/blob/main/Resultados/Practica_3.5_Resultados_JoseReyes.pdf)
