@@ -35,6 +35,10 @@ Cada día se publican cientos de noticias ambientales, pero pocas personas tiene
 
 
 ## 🖼️ Imágenes
+<img width="500" height="300" alt="Captura de pantalla (49)" src="https://github.com/user-attachments/assets/4eace05e-95f8-41de-b7f8-354cfc1672f1" />
+<img width="500" height="300" alt="Captura de pantalla (50)" src="https://github.com/user-attachments/assets/427ba7fb-9a6a-48e9-8b61-cf5dda90f473" />
+
+
 
 
 ## 🎥 Video
