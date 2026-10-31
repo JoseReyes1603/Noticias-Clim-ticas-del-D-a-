@@ -11,7 +11,7 @@
 | **Escenario** | Noticias_Climaticas_JoseReyes |
 | **Fecha** | 30/10/2026 |
 
-🔗 **Página publicada:** [Abrir la página en GitHub Pages](https://josereyes1603.github.io/Noticias-Climaticas-del-Dia/Codigo/)
+🔗 **Página publicada:** [Abrir la página en GitHub Pages]( https://josereyes1603.github.io/Noticias-Clim-ticas-del-D-a-/Codigo/)
 
 ---
 
