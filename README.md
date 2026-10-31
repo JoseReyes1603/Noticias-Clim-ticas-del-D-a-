@@ -43,7 +43,7 @@ Cada día se publican cientos de noticias ambientales, pero pocas personas tiene
 
 ## 🎥 Video
 
-▶️ [Ver video de la práctica](PEGA_AQUI_EL_LINK_DE_YOUTUBE_O_DRIVE)
+▶️ [Ver video de la práctica](https://youtube.com/shorts/WIEhOvvKYsM?feature=share)
 
 En el video se muestra la página, la consulta de los temas, el escenario funcionando en Make y el resumen que regresa la IA con los enlaces a las fuentes.
 
