@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noticias climáticas del día</title>
+<style>
+  :root {
+    --verde-oscuro: #1b4332;
+    --verde: #2d6a4f;
+    --verde-medio: #40916c;
+    --verde-claro: #95d5b2;
+    --fondo: #f1f8f4;
+    --tarjeta: #ffffff;
+    --texto: #1f2d27;
+    --texto-suave: #52675d;
+    --azul: #1d6f8a;
+    --error: #b23a3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ---------- Portada ---------- */
+  header {
+    background: linear-gradient(135deg, var(--verde-oscuro) 0%, var(--verde-medio) 100%);
+    color: #fff;
+    padding: 48px 16px 64px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 10px;
+    font-size: clamp(1.8rem, 5vw, 2.7rem);
+  }
+  header p {
+    margin: 0 auto;
+    max-width: 640px;
+    font-size: 1.05rem;
+    opacity: .92;
+  }
+  .hoy {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.15);
+    font-size: .9rem;
+  }
+
+  main {
+    max-width: 1000px;
+    margin: -36px auto 40px;
+    padding: 0 16px;
+  }
+  .seccion-titulo {
+    margin: 0 0 14px;
+    font-size: 1.1rem;
+    color: var(--verde-oscuro);
+    background: var(--tarjeta);
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(27,67,50,.1);
+  }
+
+  /* ---------- Tarjetas de temas ---------- */
+  .temas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 16px;
+  }
+  .tema {
+    position: relative;
+    text-align: left;
+    background: var(--tarjeta);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 20px 18px 18px;
+    box-shadow: 0 4px 14px rgba(27,67,50,.1);
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .tema:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(27,67,50,.18);
+    border-color: var(--verde-claro);
+  }
+  .tema:focus-visible { outline: 3px solid var(--verde-medio); outline-offset: 2px; }
+  .tema.activo { border-color: var(--verde-medio); background: #e9f5ee; }
+  .tema:disabled { cursor: wait; opacity: .6; }
+  .tema .icono { font-size: 2rem; line-height: 1; }
+  .tema .bloque {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: .72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--verde);
+    background: #e3f2e9;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .tema h3 {
+    margin: 12px 0 4px;
+    font-size: 1.08rem;
+    color: var(--verde-oscuro);
+  }
+  .tema p {
+    margin: 0 0 12px;
+    font-size: .9rem;
+    color: var(--texto-suave);
+  }
+  .tema .accion {
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--verde-medio);
+  }
+
+  /* ---------- Estado y resultados ---------- */
+  .estado {
+    margin: 22px 0 0;
+    color: var(--texto-suave);
+    font-style: italic;
+    min-height: 1.5em;
+    text-align: center;
+  }
+  .estado.error { color: var(--error); font-style: normal; font-weight: 600; }
+
+  #resultados {
+    display: none;
+    background: var(--tarjeta);
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(27,67,50,.12);
+    padding: 22px;
+    margin-top: 18px;
+  }
+  .resultados-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 2px solid var(--verde-claro);
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+  }
+  .resultados-encabezado h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--verde-oscuro);
+  }
+  .fecha { color: var(--texto-suave); font-size: .95rem; }
+  .respuesta {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+    background: var(--fondo);
+    border-left: 4px solid var(--verde-medio);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .respuesta a { color: var(--azul); }
+  .enlace-noticia {
+    display: inline-block;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #e1eff4;
+  }
+  .enlace-noticia:hover { background: #cde4ec; text-decoration: underline; }
+
+  footer {
+    text-align: center;
+    color: var(--texto-suave);
+    font-size: .85rem;
+    padding: 0 16px 24px;
+  }
+  @media (max-width: 480px) {
+    header { padding: 36px 16px 56px; }
+    #resultados { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌎 Noticias climáticas del día</h1>
+  <p>Esta página muestra un resumen de las noticias ambientales más recientes, explicado por inteligencia artificial. Haz clic en un tema para ver qué está pasando hoy.</p>
+  <span class="hoy" id="hoy"></span>
+</header>
+
+<main>
+  <h2 class="seccion-titulo">Elige un tema</h2>
+
+  <div class="temas" id="temas">
+    <button class="tema" type="button" data-tema="olas de calor México">
+      <span class="bloque">Cambio climático</span>
+      <div class="icono">🌡️</div>
+      <h3>Olas de calor en México</h3>
+      <p>Temperaturas extremas y sus efectos en la salud y el campo.</p>
+      <span class="accion">Ver noticias →</span>
+    </button>
+
+    <button class="tema" type="button" data-tema="contaminación del mar">
+      <span class="bloque">Impacto humano</span>
+      <div class="icono">🌊</div>
+      <h3>Contaminación del mar</h3>
+      <p>Basura, derrames y descargas que dañan los océanos.</p>
+      <span class="accion">Ver noticias →</span>
+    </button>
+
+    <button class="tema" type="button" data-tema="plásticos de un solo uso">
+      <span class="bloque">Consumo</span>
+      <div class="icono">🥤</div>
+      <h3>Plásticos de un solo uso</h3>
+      <p>Prohibiciones, alternativas y hábitos de consumo.</p>
+      <span class="accion">Ver noticias →</span>
+    </button>
+
+    <button class="tema" type="button" data-tema="energías renovables México">
+      <span class="bloque">Energía</span>
+      <div class="icono">☀️</div>
+      <h3>Energías renovables en México</h3>
+      <p>Solar, eólica y la transición energética del país.</p>
+      <span class="accion">Ver noticias →</span>
+    </button>
+
+    <button class="tema" type="button" data-tema="sequía Sinaloa">
+      <span class="bloque">Local</span>
+      <div class="icono">🏜️</div>
+      <h3>Sequía en Sinaloa</h3>
+      <p>Nivel de las presas, agua potable y agricultura.</p>
+      <span class="accion">Ver noticias →</span>
+    </button>
+
+    <button class="tema" type="button" data-tema="manglares Sinaloa">
+      <span class="bloque">Local</span>
+      <div class="icono">🌿</div>
+      <h3>Manglares de Sinaloa</h3>
+      <p>Conservación y amenazas a los ecosistemas costeros.</p>
+      <span class="accion">Ver noticias →</span>
+    </button>
+  </div>
+
+  <div id="estado" class="estado"></div>
+
+  <section id="resultados">
+    <div class="resultados-encabezado">
+      <h2 id="tituloResultados">Resultados</h2>
+      <span id="fecha" class="fecha"></span>
+    </div>
+    <div id="respuesta" class="respuesta"></div>
+  </section>
+</main>
+
+<footer>Desarrollo Sustentable · Práctica 3.5 · José Reyes Valdés Zamudio</footer>
+
+<script>
+  // Pega aquí la URL de tu webhook de Make (Webhooks → Custom webhook)
+  const WEBHOOK_URL = "https://hook.us2.make.com/mwvzq4ayxhzurtfnsuiaall3k5jsk822";
+
+  const botones = document.querySelectorAll(".tema");
+  const estado = document.getElementById("estado");
+  const resultados = document.getElementById("resultados");
+  const tituloResultados = document.getElementById("tituloResultados");
+  const fecha = document.getElementById("fecha");
+  const respuesta = document.getElementById("respuesta");
+
+  function fechaDeHoy() {
+    return new Date().toLocaleDateString("es-MX", {
+      weekday: "long", year: "numeric", month: "long", day: "numeric"
+    });
+  }
+  document.getElementById("hoy").textContent = fechaDeHoy();
+
+  // Muestra el texto respetando saltos de línea y convierte en enlace las líneas que empiezan con http
+  function mostrarTexto(texto) {
+    respuesta.innerHTML = "";
+    const lineas = texto.split(/\r?\n/);
+    lineas.forEach(function (linea, i) {
+      const limpia = linea.trim();
+      if (limpia.startsWith("http")) {
+        const a = document.createElement("a");
+        a.href = limpia;
+        a.textContent = "🔗 Leer noticia completa";
+        a.title = limpia;
+        a.className = "enlace-noticia";
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        respuesta.appendChild(a);
+      } else {
+        respuesta.appendChild(document.createTextNode(linea));
+      }
+      if (i < lineas.length - 1) {
+        respuesta.appendChild(document.createTextNode("\n"));
+      }
+    });
+  }
+
+  function bloquear(valor) {
+    botones.forEach(function (b) { b.disabled = valor; });
+  }
+
+  async function verNoticias(boton) {
+    const tema = boton.dataset.tema;
+    const nombre = boton.querySelector("h3").textContent;
+
+    botones.forEach(function (b) { b.classList.remove("activo"); });
+    boton.classList.add("activo");
+    bloquear(true);
+    estado.className = "estado";
+    estado.textContent = "Buscando y resumiendo noticias...";
+    resultados.style.display = "none";
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        body: new URLSearchParams({ tema: tema })
+      });
+
+      if (!res.ok) throw new Error("HTTP " + res.status);
+
+      const texto = await res.text();
+
+      tituloResultados.textContent = "Noticias sobre: " + nombre;
+      fecha.textContent = fechaDeHoy();
+      mostrarTexto(texto);
+      resultados.style.display = "block";
+      estado.textContent = "";
+      resultados.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) {
+      estado.className = "estado error";
+      estado.textContent = "No se pudieron obtener las noticias, intenta de nuevo.";
+    } finally {
+      bloquear(false);
+    }
+  }
+
+  botones.forEach(function (boton) {
+    boton.addEventListener("click", function () { verNoticias(boton); });
+  });
+</script>
+
+</body>
+</html>
